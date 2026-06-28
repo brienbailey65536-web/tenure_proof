@@ -1,118 +1,71 @@
-# Stellar Notes DApp
+# tenure_proof
 
-**Stellar Notes DApp** - Blockchain-Based Decentralized Note-Taking System
+## Project Title
+tenure_proof
 
 ## Project Description
-
-Stellar Notes DApp is a decentralized smart contract solution built on the Stellar blockchain using Soroban SDK. It provides a secure, immutable platform for managing personal notes directly on the blockchain. The contract ensures that your data is stored transparently and is only manageable through predefined smart contract functions, eliminating reliance on centralized database providers.
-
-The system allows users to create, view, and delete notes, leveraging the efficiency and security of the Stellar network. Each note is uniquely identified and stored within the contract's instance storage, ensuring data persistence and reliability.
+`tenure_proof` is a Soroban smart contract on Stellar that turns employment
+history into a tamper-evident, on-chain credential. An employer (HR system
+or manager wallet) issues a signed tenure attestation — role, start date,
+and optional end date — directly against the worker's address. The worker
+can then present any record index to a future employer or background-check
+agent, who reads the contract to confirm the role, the issuer, the dates,
+and whether the credential is still active or has been revoked, without
+ever calling the previous employer.
 
 ## Project Vision
-
-Our vision is to revolutionize personal productivity in the digital age by:
-
-- **Decentralizing Data**: Moving note-taking from centralized servers to a global, distributed blockchain
-- **Ensuring Ownership**: Empowering users to have complete control and ownership over their digital thoughts and information
-- **Guaranteeing Immutability**: Providing a permanent, tamper-proof record of notes that cannot be altered or deleted by third parties
-- **Enhancing Privacy**: Leveraging blockchain security to protect personal information from unauthorized access
-- **Building Trustless Systems**: Creating a platform where data integrity is guaranteed by code, not by company promises
-
-We envision a future where digital information is truly personal and sovereign, empowering individuals with complete autonomy over their digital assets.
+Hiring today relies on PDFs, phone calls, and trust in third-party
+background-check vendors who themselves cannot prove a record has not been
+forged. Our vision is a portable, worker-owned employment graph: every
+engagement a person has ever had becomes a verifiable credential anchored
+to Stellar, revocable only by the original issuer and verifiable by anyone
+in milliseconds. Over time this becomes the universal substrate for
+reference checks, gig-economy reputation, professional licensing, and
+cross-border hiring — replacing opaque centralised HR-tech databases with
+a transparent, user-controlled identity primitive.
 
 ## Key Features
+- **Issuer-signed attestations** — `record_tenure` requires `require_auth()`
+  from the employer, so only the real HR/manager wallet can mint a record.
+- **Ongoing vs. closed engagements** — `end == 0` is treated as a current
+  job; `is_current` lets verifiers distinguish present-tense employment.
+- **Revocation with reason** — the original employer (and only them) can
+  call `revoke_tenure` to invalidate a record, with the reason stored
+  on-chain for audit.
+- **Public verification** — `verify` returns a compact status code
+  (0 not-found / 1 current / 2 past / 3 revoked) for cheap third-party
+  background checks.
+- **Worker-indexed registry** — `list_records` plus `get_employer` /
+  `get_role` let any verifier enumerate a worker's full tenure history
+  without needing the employer to be online.
 
-### 1. **Simple Note Creation**
+## Contract
 
-- Create notes with just one function call
-- Specify title and content for each note
-- Automated ID generation for unique identification
-- Persistent storage on the Stellar blockchain
-
-### 2. **Efficient Data Retrieval**
-
-- Fetch all stored notes in a single call
-- Structured data representation for easy frontend integration
-- Quick access to your entire note collection
-- Real-time synchronization with the blockchain state
-
-### 3. **Secure Deletion**
-
-- Remove specific notes using their unique IDs
-- Permanent removal from the contract storage
-- Clean and efficient storage management
-- Immediate update of the note list after deletion
-
-### 4. **Transparency and Security**
-
-- View all note activities on the blockchain
-- Blockchain-based verification of all storage actions
-- Immutable records of note creation and deletion
-- Protected against unauthorized modifications
-
-### 5. **Stellar Network Integration**
-
-- Leverages the high speed and low cost of Stellar
-- Built using the modern Soroban Smart Contract SDK
-- Scalable architecture for growing note collections
-- Interoperable with other Stellar-based services
-
-## Contract Details
-
-- Contract Address: CBLU4IUASQ4WUMOXBFLZRSBBLILGOH33GS4LUPKFBCCCMJCDQNMF7G2M
-  (Screenshot has been removed)
+- **Network:** Stellar Testnet (Public)
+- **Scope:** identity dApp — see `contracts/tenure_proof/src/lib.rs` for the full tenure_proof business logic.
+- **Functions exposed:** see `Key Features` above and the `pub fn` list in `lib.rs`.
+- **Contract ID:** `CB3YZ5V6IIGDAPPFDW4H76JY76PHX25BUNGHMIDNN2OZORYFJPAYQ5CV`
+- **Explorer template:** `https://stellar.expert/explorer/testnet/tx/b7fa4eb6c50831b550b51c99cd2b9f2ff79e91a5f1f8ce973e93223ea1e58d02`
 
 ## Future Scope
+- **Worker co-signature mode** — optional second `require_auth()` from the
+  worker so attestations are mutually consented, enabling true
+  self-sovereign identity semantics.
+- **Structured role taxonomy** — replace the free-form `Symbol` role with
+  an ISCO / O*NET code registry contract for machine-readable job titles.
+- **Selective disclosure / ZK proofs** — let workers prove "I held a Senior
+  Engineer role for ≥ 3 years" without revealing the employer's identity.
+- **Reputation aggregator** — a companion contract that computes
+  aggregate metrics (total years in industry, number of revocations,
+  longest tenure) directly from the on-chain history.
+- **Cross-chain attestation bridge** — mirror credentials to EVM L2s via
+  Stellar's interoperability layer so the same worker identity is portable
+  across ecosystems.
+- **Frontend dApp** — wallet-based UI for employers to issue records and
+  for workers to share a one-click verification link with recruiters.
 
-### Short-Term Enhancements
+## Profile
 
-1. **Note Encryption**: Support for end-to-end encryption of note content for enhanced privacy
-2. **Category Management**: Add tags and categories to organize notes efficiently
-3. **Rich Text Support**: Extend support beyond plain text to include Markdown and formatted content
-4. **Search Functionality**: Implement advanced search filters for large note collections
-
-### Medium-Term Development
-
-5. **Collaborative Notes**: Implement multi-signature requirements for shared or collaborative note-taking
-   - Shared access for multiple addresses
-   - Permission-based editing and viewing
-   - Version history tracking
-6. **Notification System**: Off-chain bridge to alert users of new updates or shared notes
-7. **Asset Attachment**: Capability to attach digital assets or tokens to specific notes
-8. **Inter-Contract Integration**: Allow other smart contracts to interact with and store data in the notes contract
-
-### Long-Term Vision
-
-9. **Cross-Chain Synchronization**: Extend note storage to multiple blockchain networks
-10. **Decentralized UI Hosting**: Host the frontend on IPFS or similar decentralized platforms
-11. **AI-Powered Summarization**: Optional integration with AI to help users summarize their notes
-12. **Privacy Layers**: Implement zero-knowledge proofs for completely private note content
-13. **DAO Governance**: Community-driven protocol improvements and feature prioritization
-14. **Identity Management**: Integration with decentralized identity (DID) systems for user management
-
-### Enterprise Features
-
-15. **Corporate Documentation**: Adapt the system for secure corporate record-keeping
-16. **Immutable Logging**: Create time-locked logs for audit purposes
-17. **Automated Reporting**: Automatic note triggers for periodic reporting
-18. **Multi-Language Support**: Expand accessibility with internationalization
-
----
-
-## Technical Requirements
-
-- Soroban SDK
-- Rust programming language
-- Stellar blockchain network
-
-## Getting Started
-
-Deploy the smart contract to Stellar's Soroban network and interact with it using the three main functions:
-
-- `create_note()` - Create a new note with a title and content
-- `get_notes()` - Retrieve all stored notes from the contract
-- `delete_note()` - Remove a specific note by its ID
-
----
-
-**Stellar Notes DApp** - Securing Your Thoughts on the Blockchain
+- **Name:** <!-- Fill github name -->
+- **Project:** `tenure_proof` (identity)
+- **Built with:** Soroban SDK 25, Rust, Stellar Testnet
